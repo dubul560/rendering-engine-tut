@@ -46,6 +46,7 @@ bool SystemClass::Initialize()
 	// 프로그램의 모든 그래픽 렌더링을 관리하기 위한 객체 생성과 초기화
 	m_Application = new ApplicationClass;
 
+	// 렌더링 화면을 생성하기 위한 정보와 객체를 어플리케이션 초기화함수에 전달
 	result = m_Application->Initialize(screenWidth, screenHeight, m_hwnd);
 	if (!result)
 	{
