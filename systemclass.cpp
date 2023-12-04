@@ -40,7 +40,11 @@ bool SystemClass::Initialize()
 	// 키보드 입력을 활용하기 위해 인풋 객체 생성과 초기화
 	m_Input = new InputClass;
 
-	m_Input->Initialize();
+	result = m_Input->Initialize(m_hinstance, m_hwnd, screenWidth, screenHeight);
+	if (!result)
+	{
+		return false;
+	}
 
 	// Create and initialize the application class object.  This object will handle rendering all the graphics for this application.
 	// 프로그램의 모든 그래픽 렌더링을 관리하기 위한 객체 생성과 초기화
@@ -143,14 +147,16 @@ bool SystemClass::Frame()
 	bool result;
 
 
-	// Check if the user pressed escape and wants to exit the application.
-	if (m_Input->IsKeyDown(VK_ESCAPE))
+	// Do the input frame processing.
+	result = m_Input->Frame();
+	if (!result)
 	{
 		return false;
 	}
 
+
 	// Do the frame processing for the application class object.
-	result = m_Application->Frame();
+	result = m_Application->Frame(m_Input);
 	if (!result)
 	{
 		return false;
@@ -161,36 +167,7 @@ bool SystemClass::Frame()
 
 LRESULT CALLBACK SystemClass::MessageHandler(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lparam)
 {
-	// 윈도우 시스템 메시지를 확인하는 함수
-
-
-	switch (umsg)
-	{
-		// Check if a key has been pressed on the keyboard.
-		// 키가 눌렸는지 확인
-	case WM_KEYDOWN:
-	{
-		// If a key is pressed send it to the input object so it can record that state.
-		m_Input->KeyDown((unsigned int)wparam);
-		return 0;
-	}
-
-	// Check if a key has been released on the keyboard.
-	// 키가 떼어졌는지 확인
-	case WM_KEYUP:
-	{
-		// If a key is released then send it to the input object so it can unset the state for that key.
-		m_Input->KeyUp((unsigned int)wparam);
-		return 0;
-	}
-
-	// Any other messages send to the default message handler as our application won't make use of them.
-	// 다른 메시지들은 디폴트 메시지 핸들러가 처리
-	default:
-	{
-		return DefWindowProc(hwnd, umsg, wparam, lparam);
-	}
-	}
+	return DefWindowProc(hwnd, umsg, wparam, lparam);
 }
 
 void SystemClass::InitializeWindows(int& screenWidth, int& screenHeight)
