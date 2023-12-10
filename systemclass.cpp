@@ -255,6 +255,8 @@ void SystemClass::InitializeWindows(int& screenWidth, int& screenHeight)
 	// Hide the mouse cursor.
 	ShowCursor(false);
 
+	//SetCursorPos((screenWidth / 2) + posX, (screenHeight / 2) + posY);
+
 	return;
 }
 
